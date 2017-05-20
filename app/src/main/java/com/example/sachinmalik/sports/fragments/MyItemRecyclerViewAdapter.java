@@ -49,6 +49,12 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         holder.over2.setText(mValues.get(position).getTeam2Over());
         Picasso.with(context).load(mValues.get(position).getTeam1Logo()).into(holder.team1logo);
         Picasso.with(context).load(mValues.get(position).getTeam2Logo()).into(holder.team2logo);
+        if (mValues.get(position).getIslive()){
+            holder.live.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.live.setVisibility(View.GONE);
+        }
         setAnimation(holder.itemView, position);
     }
 
@@ -79,6 +85,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         public final TextView over2;
         public final ImageView team2logo;
         public Modal1 mItem;
+        public final TextView live;
 
         public ViewHolder(View view) {
             super(view);
@@ -89,6 +96,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             team2name = (TextView) view.findViewById(R.id.team2name);
             score2 = (TextView) view.findViewById(R.id.score2);
             over2 = (TextView) view.findViewById(R.id.over2);
+            live = (TextView) view.findViewById(R.id.live);
             team1logo = (ImageView) view.findViewById(R.id.team1logo);
             team2logo = (ImageView) view.findViewById(R.id.team2logo);
         }

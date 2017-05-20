@@ -56,6 +56,13 @@ public class ItemDetail extends Fragment {
 
         View view=inflater.inflate(R.layout.fragment_item_detail, container, false);
         position=getArguments().getInt("position",0);
+        TextView live=(TextView) view.findViewById(R.id.live);
+        if (Modal.itemlist.get(position).getIslive()){
+            live.setVisibility(View.VISIBLE);
+        }
+        else {
+            live.setVisibility(View.GONE);
+        }
         ((TextView)view.findViewById(R.id.team1name)).setText(Modal.itemlist.get(position).getTeam1());
         ((TextView)view.findViewById(R.id.score1)).setText(Modal.itemlist.get(position).getTeam1Score());
         ((TextView)view.findViewById(R.id.over1)).setText(Modal.itemlist.get(position).getTeam1Over());
