@@ -6,25 +6,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.sachinmalik.sports.R;
 import com.example.sachinmalik.sports.fragments.ItemFragment.OnListFragmentInteractionListener;
-import com.example.sachinmalik.sports.fragments.dummy.DummyContent.DummyItem;
 import com.example.sachinmalik.sports.utils.Modal1;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.Random;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
     private final List<Modal1> mValues;
@@ -57,23 +50,13 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         Picasso.with(context).load(mValues.get(position).getTeam1Logo()).into(holder.team1logo);
         Picasso.with(context).load(mValues.get(position).getTeam2Logo()).into(holder.team2logo);
         setAnimation(holder.itemView, position);
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-
-                }
-            }
-        });
     }
 
     private void setAnimation(View viewToAnimate, int position)
     {
         if (position > lastPosition) {
             ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            anim.setDuration(new Random().nextInt(501));//to make duration random number between [0,501)
+            anim.setDuration(new Random().nextInt(501));
             viewToAnimate.startAnimation(anim);
             lastPosition = position;
         }
@@ -110,9 +93,5 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             team2logo = (ImageView) view.findViewById(R.id.team2logo);
         }
 
-       /* @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
-        }*/
     }
 }

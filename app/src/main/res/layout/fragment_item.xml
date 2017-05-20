@@ -121,6 +121,7 @@
             android:layout_height="fill_parent">
 
             <TextView
+                android:layout_gravity="right"
                 android:id="@+id/score2"
                 android:text="257/9"
                 android:textColor="@color/colorPrimary"
@@ -129,6 +130,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?attr/textAppearanceListItem" />
             <TextView
+                android:layout_gravity="right"
                 android:id="@+id/over2"
                 android:text="50.0"
                 android:textSize="13sp"

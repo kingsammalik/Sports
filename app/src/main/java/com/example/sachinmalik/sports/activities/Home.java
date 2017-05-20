@@ -1,10 +1,10 @@
 package com.example.sachinmalik.sports.activities;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
@@ -38,25 +38,31 @@ public class Home extends AppCompatActivity implements ItemFragment.OnListFragme
     @Override
     public void onListFragmentInteraction(int position) {
         Log.e("itemfrgament","item clicked with position "+position);
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
         FragmentManager fm = getSupportFragmentManager();
         Fragment newFragment = new ItemDetail();
+        newFragment.setArguments(bundle);
         FragmentTransaction transaction = fm.beginTransaction();
             transaction.replace(R.id.your_placehodler, newFragment,"detail");
             transaction.setCustomAnimations(R.anim.slide_up,R.anim.slide_down);
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             transaction.addToBackStack("detail");
             transaction.commit();
-
-// Replace whatever is in the fragment_container view with this fragment,
-// and add the transaction to the back stack if needed
-        //transaction.detach(newFragment);
-
-
-// Commit the transaction
-
         fm.executePendingTransactions();
 
 
     }
 
+    @Override
+    public void onBackPressed() {
+        FragmentManager fm = getSupportFragmentManager();
+        if (fm.getBackStackEntryCount() > 0) {
+            Log.i("MainActivity", "popping backstack");
+            fm.popBackStack();
+        } else {
+            Log.i("MainActivity", "nothing on backstack, calling super");
+            super.onBackPressed();
+        }
+    }
 }

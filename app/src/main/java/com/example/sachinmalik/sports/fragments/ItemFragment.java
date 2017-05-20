@@ -17,9 +17,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.sachinmalik.sports.R;
-import com.example.sachinmalik.sports.fragments.dummy.DummyContent;
 import com.example.sachinmalik.sports.utils.AppController;
 import com.example.sachinmalik.sports.utils.ItemClickSupport;
 import com.example.sachinmalik.sports.utils.Modal;
@@ -43,11 +42,11 @@ public class ItemFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    JSONArray response1;
+    JSONObject response1;
     RecyclerView recyclerView=null;
     private OnListFragmentInteractionListener mListener;
     MyItemRecyclerViewAdapter adapter;
-
+    ProgressDialog pDialog;
 
 
     /**
@@ -57,15 +56,7 @@ public class ItemFragment extends Fragment {
     public ItemFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static ItemFragment newInstance(int columnCount) {
-        ItemFragment fragment = new ItemFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,9 +71,10 @@ public class ItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
+
+        if(Modal.itemlist.isEmpty())
         volleyReq();
 
-        // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
              recyclerView = (RecyclerView) view;
@@ -141,57 +133,72 @@ public class ItemFragment extends Fragment {
     }
 
     void volleyReq(){
-        // Tag used to cancel the request
-        String tag_json_arry = "json_array_req";
+        String tag_json_obj = "json_obj_req";
 
         String url = "http://43.252.91.208:5015/v1/score";
 
-        final ProgressDialog pDialog = new ProgressDialog(getActivity());
+          pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
         pDialog.show();
 
-        JsonArrayRequest req = new JsonArrayRequest(Request.Method.POST,url,null,
-                new Response.Listener<JSONArray>() {
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                url, null,
+                new Response.Listener<JSONObject>() {
+
                     @Override
-                    public void onResponse(JSONArray response) {
-                        Log.e(TAG, response.toString());
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, response.toString());
                         response1=response;
                         handler.sendEmptyMessage(0);
                         pDialog.hide();
                     }
                 }, new Response.ErrorListener() {
+
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getLocalizedMessage());
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
                 pDialog.hide();
             }
         });
 
-// Adding request to request queue
-        AppController.getInstance().addToRequestQueue(req, tag_json_arry);
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
+
     }
 
     private final Handler handler = new Handler() {
 
         public void handleMessage(android.os.Message msg) {
+            try {
+                JSONArray jsonArray = new JSONArray(response1.getString("response"));
+                Modal.itemlist.clear();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String jsonStr = null;
 
-            for (int i = 0; i < response1.length(); i++) {
-                String jsonStr = null;
-                try {
-                    jsonStr = response1.getString(i);
+                    jsonStr = jsonArray.getString(i);
                     JSONObject shiftJson = new JSONObject(jsonStr);
-                     Modal.itemlist.add(new Modal1(shiftJson.getBoolean("islive"),shiftJson.getString("team1"),shiftJson.getString("team1Score")
-                             ,shiftJson.getString("team1Over"),shiftJson.getString("team1Logo"),shiftJson.getString("team2")
-                             ,shiftJson.getString("team2Score"),shiftJson.getString("team2Over"),shiftJson.getString("team2Logo")));
+                    Modal.itemlist.add(new Modal1(shiftJson.getBoolean("islive"), shiftJson.getString("team1"), shiftJson.getString("team1_score")
+                            , shiftJson.getString("team1_over"), shiftJson.getString("team1_logo"), shiftJson.getString("team2")
+                            , shiftJson.getString("team2_score"), shiftJson.getString("team2_over"), shiftJson.getString("team2_logo")));
                 }
-
+            }
 
                 catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
+
 
             adapter.notifyDataSetChanged();
         }
     };
+
+    @Override
+    public void onPause() {
+        pDialog.dismiss();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }
